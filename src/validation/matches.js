@@ -19,15 +19,15 @@ export const createMatchSchema = z
     sport: z.string().min(1),
     homeTeam: z.string().min(1),
     awayTeam: z.string().min(1),
-    startTime: z.string().datetime(),
-    endTime: z.string().datetime(),
+    startTime: z.iso.datetime(),
+    endTime: z.iso.datetime(),
     homeScore: z.coerce.number().int().nonnegative().optional(),
     awayScore: z.coerce.number().int().nonnegative().optional(),
   })
   .superRefine((data, ctx) => {
     if (new Date(data.endTime) <= new Date(data.startTime)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'endTime must be after startTime',
         path: ['endTime'],
       });
