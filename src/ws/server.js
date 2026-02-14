@@ -45,7 +45,7 @@ function broadcastToAll(wss, payload) {
 
 function broadcastToMatch(matchId, payload) {
     const subscribers = matchSubscribers.get(matchId);
-    if(!subscribers || subscribers === 0) return;
+    if(!subscribers || subscribers.size === 0) return;
 
     const message = JSON.stringify(payload);
 
@@ -62,18 +62,20 @@ function handleMessage(socket, data) {
     try {
         message = JSON.parse(data.toString());
     } catch (e) {
-        sendJson(socket, { type: 'error', message: e.message });
+        console.error(e);
+        sendJson(socket, { type: 'error', message: 'Failed to parse message' });
+        return;
     }
 
     if(message?.type === "subscribe" && Number.isInteger(message.matchId)) {
-        subscribe(message.matchId, socket);
+        subscribe(socket, message.matchId);
         socket.subscriptions.add(message.matchId);
         sendJson(socket, { type: 'subscribed', matchId: message.matchId });
         return;
     }
 
     if(message?.type === "unsubscribe" && Number.isInteger(message.matchId)) {
-        unsubscribe(message.matchId, socket);
+        unsubscribe(socket, message.matchId);
         socket.subscriptions.delete(message.matchId);
         sendJson(socket, { type: 'unsubscribed', matchId: message.matchId });
     }

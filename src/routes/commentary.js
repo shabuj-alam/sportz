@@ -33,7 +33,8 @@ commentaryRouter.get("/", async (req, res) => {
 
         res.status(200).json({ data: results });
     } catch (e) {
-        res.status(500).json({ error: 'Failed to fetch commentary', details: e.message });
+        console.error(e);
+        res.status(500).json({ error: 'Failed to fetch commentary' });
     }
 });
 
@@ -60,6 +61,7 @@ commentaryRouter.post("/", async (req, res) => {
 
         res.status(201).json({ data: result });
     } catch (e) {
-        res.status(500).json({ error: 'Failed to create commentary', details: e.message });
+        console.error(e);
+        res.status(500).json({ error: 'Failed to create commentary' });
     }
 });
